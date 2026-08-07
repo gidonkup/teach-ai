@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#18344f" />
+  <meta name="description" content="TEACH:AI — מדריך מעשי ודו-לשוני (עברית ואנגלית) למורים: איך לעבוד עם כלי AI מהגדרת צורך ועד לכלי עובד." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="TEACH:AI — מהרעיון לכלי עובד" />
+  <meta property="og:description" content="מדריך מעשי ודו-לשוני למורים: איך לעבוד עם כלי AI מהגדרת צורך ועד לכלי עובד." />
+  <meta property="og:url" content="https://gidonkup.github.io/teach-ai/" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2318344f'/%3E%3Ctext x='32' y='45' font-size='34' font-weight='900' fill='%23fff' text-anchor='middle' font-family='Arial,sans-serif'%3ET%3C/text%3E%3C/svg%3E" />
+  <title>TEACH:AI — מהרעיון לכלי עובד</title>
+  <style>
+    :root {
+      --ink: #18344f;
+      --ink-2: #31516b;
+      --paper: #f7f3ea;
+      --paper-2: #fffdf8;
+      --line: #d8d3c9;
+      --sky: #77c7d8;
+      --sky-soft: #dff3f5;
+      --coral: #ef775f;
+      --coral-soft: #fde6df;
+      --gold: #e9b949;
+      --gold-soft: #fff1c9;
+      --mint: #83b99a;
+      --mint-soft: #e4f2e9;
+      --shadow: 0 18px 50px rgba(24, 52, 79, .11);
+      --radius: 26px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 8% 5%, rgba(119,199,216,.20), transparent 23rem),
+        radial-gradient(circle at 94% 18%, rgba(239,119,95,.12), transparent 22rem),
+        var(--paper);
+      color: var(--ink);
+      font-family: Arial, "Noto Sans Hebrew", sans-serif;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    body.menu-open { overflow: hidden; }
+    button, input, textarea { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; }
+    img { max-width: 100%; }
+
+    .progress {
+      position: fixed; inset: 0 0 auto 0; height: 4px; z-index: 110;
+      background: transparent;
+    }
+    .progress > span { display: block; width: 0; height: 100%; background: var(--coral); }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(247,243,234,.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(24,52,79,.12);
+    }
+    .nav-shell {
+      width: min(1180px, calc(100% - 32px)); margin: auto; min-height: 76px;
+      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; font-weight: 900; letter-spacing: -.02em; }
+    .brand-mark {
+      width: 43px; height: 43px; border-radius: 14px; display: grid; place-items: center;
+      background: var(--ink); color: white; box-shadow: 0 8px 18px rgba(24,52,79,.18);
+      font-size: 19px;
+    }
+    .brand small { display: block; color: var(--coral); font-size: 10px; letter-spacing: .09em; text-transform: uppercase; line-height: 1; margin-top: 4px; }
+    .desktop-nav { display: flex; align-items: center; gap: 4px; }
+    .desktop-nav a { text-decoration: none; font-size: 14px; font-weight: 700; padding: 10px 11px; border-radius: 10px; }
+    .desktop-nav a:hover, .desktop-nav a:focus-visible { background: white; outline: none; }
+    .nav-actions { display: flex; gap: 8px; align-items: center; }
+    .lang-btn, .menu-btn, .icon-btn {
+      border: 1px solid rgba(24,52,79,.16); background: var(--paper-2); color: var(--ink);
+      border-radius: 12px; min-height: 42px; padding: 0 13px; font-weight: 800; cursor: pointer;
+    }
+    .lang-btn:hover, .menu-btn:hover, .icon-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 12px rgba(24,52,79,.08); }
+    .menu-btn { display: none; width: 44px; padding: 0; font-size: 20px; }
+
+    .mobile-panel {
+      display: none; position: fixed; inset: 77px 0 0 0; z-index: 95; padding: 18px;
+      background: rgba(247,243,234,.98); overflow: auto;
+    }
+    .mobile-panel.open { display: block; }
+    .mobile-panel a { display: block; padding: 14px; margin-bottom: 8px; border-radius: 14px; background: white; text-decoration: none; font-weight: 800; }
+
+    .container { width: min(1120px, calc(100% - 36px)); margin-inline: auto; }
+    .hero { padding: 82px 0 58px; overflow: hidden; }
+    .hero-grid { display: grid; grid-template-columns: 1.07fr .93fr; align-items: center; gap: 54px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 900; color: var(--coral); letter-spacing: .08em; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 34px; height: 3px; border-radius: 9px; background: currentColor; }
+    h1 { font-size: clamp(47px, 6.2vw, 82px); line-height: .98; letter-spacing: -.055em; margin: 20px 0 24px; max-width: 850px; }
+    .hero-lead { font-size: clamp(18px, 2vw, 23px); color: var(--ink-2); max-width: 670px; margin: 0 0 30px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn {
+      border: 0; border-radius: 14px; padding: 13px 19px; min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      text-decoration: none; font-weight: 900; cursor: pointer; transition: .18s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--coral); color: white; box-shadow: 0 12px 25px rgba(239,119,95,.25); }
+    .btn-secondary { background: var(--paper-2); color: var(--ink); border: 1px solid rgba(24,52,79,.14); }
+    .hero-note { margin-top: 22px; color: var(--ink-2); font-size: 14px; display: flex; gap: 16px; flex-wrap: wrap; }
+    .hero-note span::before { content: "✓"; color: var(--mint); font-weight: 900; margin-inline-end: 5px; }
+
+    .conversation-art {
+      position: relative; min-height: 430px; border-radius: 40px; background: var(--ink); overflow: hidden;
+      box-shadow: var(--shadow); padding: 34px;
+    }
+    .conversation-art::before, .conversation-art::after { content: ""; position: absolute; border-radius: 50%; }
+    .conversation-art::before { width: 230px; height: 230px; background: rgba(119,199,216,.25); inset: -70px auto auto -50px; }
+    .conversation-art::after { width: 160px; height: 160px; background: rgba(233,185,73,.22); inset: auto -40px -40px auto; }
+    .chat-card { position: relative; z-index: 2; border-radius: 20px; padding: 17px 19px; max-width: 88%; box-shadow: 0 12px 24px rgba(0,0,0,.12); font-weight: 700; line-height: 1.4; }
+    .chat-human { background: var(--gold-soft); margin: 12px 0 18px auto; transform: rotate(-1.5deg); }
+    [dir="ltr"] .chat-human { margin: 12px auto 18px 0; }
+    .chat-ai { background: white; margin: 0 auto 18px 0; transform: rotate(1deg); }
+    [dir="ltr"] .chat-ai { margin: 0 0 18px auto; }
+    .chat-result { background: var(--sky-soft); margin: 0 auto; transform: rotate(-.6deg); }
+    .chat-label { display: block; font-size: 10px; color: var(--coral); text-transform: uppercase; letter-spacing: .09em; margin-bottom: 5px; }
+    .art-caption { color: rgba(255,255,255,.72); position: absolute; z-index: 2; bottom: 18px; inset-inline: 34px; font-size: 13px; }
+
+    .section { padding: 84px 0; }
+    .section.alt { background: rgba(255,255,255,.52); border-block: 1px solid rgba(24,52,79,.08); }
+    .section.dark { background: var(--ink); color: white; }
+    .section-head { display: grid; grid-template-columns: .38fr .62fr; gap: 40px; align-items: end; margin-bottom: 42px; }
+    .section-kicker { color: var(--coral); font-weight: 900; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+    h2 { font-size: clamp(34px, 4.2vw, 58px); line-height: 1.05; letter-spacing: -.04em; margin: 10px 0 0; }
+    .section-intro { color: var(--ink-2); font-size: 19px; margin: 0; max-width: 700px; }
+    .dark .section-intro { color: rgba(255,255,255,.76); }
+    h3 { font-size: 22px; line-height: 1.2; letter-spacing: -.02em; margin: 0 0 10px; }
+    p { margin-top: 0; }
+
+    .big-idea {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
+      padding: 32px; border-radius: var(--radius); background: var(--paper-2); border: 1px solid var(--line); box-shadow: var(--shadow);
+    }
+    .big-idea-quote { font-size: clamp(25px, 3vw, 39px); line-height: 1.2; font-weight: 900; letter-spacing: -.03em; }
+    .big-idea-copy { color: var(--ink-2); font-size: 17px; }
+    .analogy-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 15px; margin-top: 22px; }
+    .analogy { border-radius: 20px; padding: 22px; border: 1px solid var(--line); background: rgba(255,255,255,.75); }
+    .analogy .num { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: var(--sky-soft); font-weight: 900; margin-bottom: 16px; }
+
+    .model-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .model-card { border-radius: var(--radius); padding: 28px; background: white; border: 1px solid var(--line); }
+    .model-card.highlight { background: var(--sky-soft); border-color: transparent; }
+    .token-line { display: flex; flex-wrap: wrap; gap: 7px; margin: 22px 0; }
+    .token-line span { background: white; border: 1px solid rgba(24,52,79,.12); border-radius: 9px; padding: 5px 9px; font-size: 14px; }
+    .token-line span:last-child { background: var(--gold-soft); border-color: var(--gold); }
+    .not-list { list-style: none; padding: 0; margin: 18px 0 0; }
+    .not-list li { padding: 10px 0; border-bottom: 1px solid rgba(24,52,79,.1); }
+    .not-list li::before { content: "לא / NOT"; color: var(--coral); font-size: 10px; font-weight: 900; margin-inline-end: 10px; }
+
+    .cards-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
+    .muscle { border-radius: 22px; padding: 24px; background: white; border: 1px solid var(--line); min-height: 210px; }
+    .muscle:nth-child(2n) { background: var(--sky-soft); border-color: transparent; }
+    .muscle:nth-child(3n) { background: var(--gold-soft); border-color: transparent; }
+    .muscle-icon { width: 47px; height: 47px; display: grid; place-items: center; border-radius: 15px; background: var(--ink); color: white; font-weight: 900; margin-bottom: 19px; }
+
+    .formula { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 30px; }
+    .formula-card { padding: 21px; border-radius: 20px; background: white; border-top: 5px solid var(--sky); }
+    .formula-card:nth-child(2) { border-color: var(--gold); }
+    .formula-card:nth-child(3) { border-color: var(--coral); }
+    .formula-card:nth-child(4) { border-color: var(--mint); }
+    .formula-card b { display: block; font-size: 20px; margin-bottom: 5px; }
+    .builder {
+      background: var(--ink); color: white; border-radius: 30px; padding: 30px; box-shadow: var(--shadow);
+    }
+    .builder-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 22px; }
+    .field label { display: block; font-size: 13px; color: rgba(255,255,255,.7); font-weight: 800; margin-bottom: 6px; }
+    .field textarea {
+      width: 100%; min-height: 104px; resize: vertical; border: 1px solid rgba(255,255,255,.17); border-radius: 14px;
+      padding: 13px; background: rgba(255,255,255,.08); color: white; outline: none;
+    }
+    .field textarea:focus { border-color: var(--sky); box-shadow: 0 0 0 3px rgba(119,199,216,.16); }
+    .builder-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+    .builder-output { margin-top: 18px; padding: 18px; border-radius: 16px; background: white; color: var(--ink); white-space: pre-wrap; min-height: 90px; }
+
+    .uses { display: grid; grid-template-columns: repeat(2,1fr); gap: 17px; }
+    .use-card { position: relative; overflow: hidden; border-radius: 22px; padding: 26px; background: white; border: 1px solid var(--line); }
+    .use-card::after { content: attr(data-step); position: absolute; inset-inline-end: 18px; top: 9px; font-size: 58px; line-height: 1; font-weight: 900; color: rgba(24,52,79,.055); }
+    .use-tag { display: inline-block; background: var(--coral-soft); color: #a53e2d; border-radius: 999px; padding: 4px 9px; font-size: 11px; font-weight: 900; margin-bottom: 14px; }
+    .example-box { background: var(--paper); border-radius: 13px; padding: 13px; font-size: 14px; margin-top: 14px; border-inline-start: 4px solid var(--gold); }
+
+    .case-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 35px; align-items: start; }
+    .case-sticky { position: sticky; top: 105px; border-radius: 26px; background: var(--gold-soft); color: var(--ink); padding: 28px; transform: rotate(-1deg); }
+    .case-sticky strong { font-size: 27px; display: block; line-height: 1.15; margin-bottom: 12px; }
+    .timeline { position: relative; padding-inline-start: 28px; }
+    .timeline::before { content: ""; position: absolute; inset-inline-start: 6px; top: 7px; bottom: 7px; width: 3px; background: rgba(255,255,255,.2); }
+    .timeline-item { position: relative; padding: 0 0 28px 20px; }
+    .timeline-item::before { content: ""; position: absolute; inset-inline-start: -27px; top: 6px; width: 15px; height: 15px; border-radius: 50%; background: var(--coral); border: 4px solid var(--ink); box-shadow: 0 0 0 2px var(--coral); }
+    .timeline-item p { color: rgba(255,255,255,.72); }
+
+    .html-demo { display: grid; grid-template-columns: .95fr 1.05fr; gap: 24px; }
+    .browser-window { background: white; border: 1px solid var(--line); border-radius: 24px; overflow: hidden; box-shadow: var(--shadow); }
+    .browser-bar { height: 43px; background: #e8e5df; display: flex; align-items: center; gap: 7px; padding: 0 15px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--coral); }
+    .dot:nth-child(2) { background: var(--gold); }
+    .dot:nth-child(3) { background: var(--mint); }
+    .browser-body { padding: 26px; }
+    .html-layers { display: grid; gap: 12px; }
+    .layer { border-radius: 18px; padding: 19px; border: 1px solid var(--line); background: var(--paper-2); }
+    .layer b { display: block; margin-bottom: 4px; }
+    .code-word { display: inline-block; direction: ltr; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; background: var(--ink); color: white; padding: 3px 7px; border-radius: 7px; }
+    .demo-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .mini-demo { background: var(--paper); border-radius: 16px; padding: 17px; min-height: 155px; }
+    .timer-number { font-size: 43px; font-weight: 900; line-height: 1; margin: 13px 0; font-variant-numeric: tabular-nums; }
+    .tiny-btn { border: 0; border-radius: 10px; padding: 8px 11px; background: var(--ink); color: white; cursor: pointer; font-weight: 800; }
+    .answer { display: none; margin-top: 12px; padding: 10px; border-radius: 10px; background: var(--mint-soft); }
+    .answer.show { display: block; }
+
+    .vibe-steps { counter-reset: vibe; display: grid; gap: 14px; }
+    .vibe-step { counter-increment: vibe; display: grid; grid-template-columns: 58px 1fr auto; gap: 16px; align-items: center; background: white; border: 1px solid var(--line); border-radius: 20px; padding: 19px; }
+    .vibe-step::before { content: counter(vibe); width: 48px; height: 48px; border-radius: 15px; display: grid; place-items: center; background: var(--ink); color: white; font-weight: 900; font-size: 19px; }
+    .vibe-step p { color: var(--ink-2); margin-bottom: 0; }
+
+    .safety-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 19px; }
+    .safety-card { border-radius: 22px; padding: 24px; background: white; color: var(--ink); }
+    .safety-card.danger { background: var(--coral-soft); }
+    .safety-card.good { background: var(--mint-soft); }
+    .check-list { list-style: none; padding: 0; margin: 15px 0 0; }
+    .check-list li { position: relative; padding: 8px 28px 8px 0; }
+    [dir="ltr"] .check-list li { padding: 8px 0 8px 28px; }
+    .check-list li::before { content: "✓"; position: absolute; inset-inline-start: 0; color: #287b4c; font-weight: 900; }
+    .danger .check-list li::before { content: "!"; color: #b23d2b; }
+
+    .prompt-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 15px; }
+    .prompt-card { display: flex; flex-direction: column; border-radius: 20px; background: white; border: 1px solid var(--line); padding: 22px; }
+    .prompt-card p { flex: 1; color: var(--ink-2); white-space: pre-wrap; }
+    .copy-btn { align-self: flex-start; border: 1px solid rgba(24,52,79,.14); background: var(--paper); border-radius: 11px; padding: 8px 12px; cursor: pointer; font-weight: 800; }
+    .copy-btn.copied { background: var(--mint-soft); color: #21663e; }
+
+    .workshop { background: var(--gold-soft); border-radius: 34px; padding: 38px; }
+    .workshop-steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 26px; }
+    .workshop-step { background: rgba(255,255,255,.72); border-radius: 18px; padding: 20px; }
+    .workshop-step span { color: var(--coral); font-weight: 900; font-size: 12px; }
+
+    .finish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .finish-card { border-radius: 26px; padding: 28px; background: white; border: 1px solid var(--line); }
+    .finish-card ul { margin-bottom: 0; }
+    .resources a { display: block; padding: 13px 0; border-bottom: 1px solid var(--line); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+    .footer { padding: 44px 0 90px; color: var(--ink-2); }
+    .footer-grid { display: flex; justify-content: space-between; gap: 20px; align-items: center; border-top: 1px solid var(--line); padding-top: 26px; }
+    .footer-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .whatsapp {
+      position: fixed; z-index: 90; inset-inline-end: 20px; bottom: 20px; width: 58px; height: 58px; border-radius: 50%;
+      display: grid; place-items: center; text-decoration: none; background: #25d366; color: #fff;
+      box-shadow: 0 10px 25px rgba(13,97,47,.3); border: 4px solid white;
+    }
+    .whatsapp svg { width: 30px; height: 30px; fill: currentColor; }
+    .whatsapp:hover { transform: scale(1.06); }
+    .cta-block { max-width: 720px; margin: 0 auto; text-align: center; }
+    .cta-block .section-kicker { display: flex; justify-content: center; }
+    .cta-block p { color: rgba(255,255,255,.78); margin: 18px auto 28px; }
+    .toast { position: fixed; z-index: 120; bottom: 26px; left: 50%; transform: translate(-50%, 20px); padding: 11px 18px; background: var(--ink); color: white; border-radius: 12px; opacity: 0; pointer-events: none; transition: .2s; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 980px) {
+      .desktop-nav { display: none; }
+      .menu-btn { display: block; }
+      .hero-grid, .section-head, .case-grid, .html-demo, .finish-grid { grid-template-columns: 1fr; }
+      .case-sticky { position: relative; top: auto; }
+      .formula, .workshop-steps { grid-template-columns: repeat(2,1fr); }
+      .hero { padding-top: 55px; }
+      .conversation-art { min-height: 390px; }
+    }
+    @media (max-width: 680px) {
+      .container { width: min(100% - 24px, 1120px); }
+      .brand-name { display: none; }
+      .nav-shell { width: calc(100% - 24px); min-height: 68px; }
+      .mobile-panel { top: 69px; }
+      .hero { padding: 42px 0 36px; }
+      h1 { font-size: 48px; }
+      .conversation-art { min-height: 365px; padding: 22px; border-radius: 28px; }
+      .section { padding: 64px 0; }
+      .section-head { gap: 17px; margin-bottom: 28px; }
+      .big-idea, .model-grid, .cards-3, .builder-grid, .uses, .safety-grid, .prompt-grid { grid-template-columns: 1fr; }
+      .analogy-row, .formula, .workshop-steps { grid-template-columns: 1fr; }
+      .big-idea, .builder, .workshop { padding: 23px; }
+      .demo-row { grid-template-columns: 1fr; }
+      .vibe-step { grid-template-columns: 48px 1fr; }
+      .vibe-step .copy-btn { grid-column: 2; }
+      .footer-grid { align-items: flex-start; flex-direction: column; }
+      .whatsapp { width: 52px; height: 52px; bottom: 14px; inset-inline-end: 14px; }
+    }
+    @media print {
+      .topbar, .whatsapp, .progress, .hero-actions, .builder-actions, .copy-btn, .footer-actions { display: none !important; }
+      body { background: white; }
+      .section { break-inside: avoid; padding: 38px 0; }
+      .dark { background: white !important; color: var(--ink) !important; }
+      .dark .section-intro, .timeline-item p { color: var(--ink-2) !important; }
+      .timeline::before { background: var(--line); }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+  <header class="topbar">
+    <div class="nav-shell">
+      <a class="brand" href="#top" aria-label="Home">
+        <span class="brand-mark">AI</span>
+        <span class="brand-name"><span id="brandTitle"></span><small id="brandSub"></small></span>
+      </a>
+      <nav class="desktop-nav" id="desktopNav" aria-label="Main navigation"></nav>
+      <div class="nav-actions">
+        <button class="lang-btn" id="langBtn" type="button" aria-label="Switch language">EN</button>
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+  <nav class="mobile-panel" id="mobilePanel" aria-label="Mobile navigation"></nav>
+  <main id="app"></main>
+  <a class="whatsapp" id="whatsappBtn" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.04 3C9.37 3 3.98 8.39 3.98 15.06c0 2.2.58 4.35 1.68 6.25L3 29l7.86-2.6a12.03 12.03 0 0 0 5.18 1.18h.01c6.67 0 12.06-5.4 12.06-12.06C28.1 8.4 22.71 3 16.04 3zm0 21.94h-.01a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.66 1.21 1.22-3.62-.24-.37a9.87 9.87 0 0 1-1.52-5.3c0-5.47 4.45-9.92 9.93-9.92 2.65 0 5.14 1.03 7.02 2.9a9.86 9.86 0 0 1 2.9 7.03c0 5.47-4.46 9.92-9.94 9.92zm5.44-7.44c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.24-.46-2.37-1.47-.87-.78-1.46-1.74-1.63-2.04-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.35.2 1.86.12.57-.08 1.76-.72 2-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35z"/></svg>
+  </a>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  (() => {
+    const content = {
+      he: {
+        dir: 'rtl', lang: 'he', switchLabel: 'EN', brand: 'TEACH:AI', brandSub: 'מהרעיון לכלי עובד',
+        title: 'TEACH:AI — מהרעיון לכלי עובד',
+        nav: [['mindset','תפיסה'],['muscles','השרירים'],['uses','שימושים'],['html','HTML'],['vibe','Vibe Coding'],['safety','בדיקה'],['practice','תרגול']],
+        hero: {
+          eyebrow: 'מדריך מעשי למורים', title: 'לא רק לשאול. לחשוב, ליצור ולבנות.',
+          lead: 'ChatGPT וכלי AI הם סביבת עבודה חדשה. המטרה אינה ללמוד פקודות קסם — אלא לפתח דרך עבודה: להגדיר צורך, לתת הקשר, לבנות טיוטה, לבדוק ולשפר עד שיש תוצר שאפשר באמת להשתמש בו.',
+          primary: 'מתחילים מהתפיסה', secondary: 'לתרגול המהיר', note: ['עברית ואנגלית','עובד במחשב ובנייד','כולל תרגול אינטראקטיבי'],
+          human: 'יש לי רעיון לשיעור, אבל הוא עדיין מבולגן.', ai: 'בוא נגדיר יחד מטרה, קהל, מגבלות ותוצר רצוי.', result: 'מהרעיון נוצר מהלך שיעור — ובהמשך גם משחק אינטראקטיבי.',
+          humanLabel: 'המורה', aiLabel: 'השיחה', resultLabel: 'התוצר', caption: 'הקסם אינו בתשובה הראשונה. הוא בתהליך שבין הרעיון לתוצר.'
+        },
+        mindset: {
+          kicker: '01 · שינוי התפיסה', title: 'זה כלי חדש. לכן צריך ללמוד להשתמש בו.',
+          intro: 'כשנכנסו מצגות ואקסל לעולם העבודה, לא הספיק לדעת שהם קיימים. היה צריך לתרגל צורת חשיבה חדשה. כך גם עם מודל שפה.',
+          quote: 'המיומנות החשובה אינה “לדעת AI”. היא לדעת להפוך צורך אנושי לתהליך עבודה ברור.',
+          copy: 'המורה מביא את המטרה החינוכית, ההיכרות עם התלמידים, הטעם ושיקול הדעת. המודל מביא מהירות, וריאציות, עיבוד מידע ויכולת לתרגם שפה אנושית לטקסט, לתמונה ולעיתים גם לקוד. הערך נוצר כשהשניים עובדים יחד.',
+          analogies: [
+            ['מצגת','לומדים לא רק לכתוב טקסט — אלא לארגן מסר חזותי.'],
+            ['אקסל','לומדים לא רק להזין מספרים — אלא לבנות לוגיקה ותהליך.'],
+            ['מודל שפה','לומדים לא רק לשאול שאלה — אלא לנהל שיחה שמייצרת תוצאה.']
+          ]
+        },
+        model: {
+          kicker: '02 · מה יש מתחת למכסה', title: 'מהו בעצם מודל שפה?',
+          intro: 'במילים פשוטות: מערכת שלמדה דפוסים מתוך כמויות גדולות של טקסט ומייצרת המשך מתאים להקשר. היא יכולה להישמע אנושית מאוד — אבל היא אינה אדם ואינה מכונת אמת.',
+          predictTitle: 'הוא מזהה דפוסים ומנבא המשך', predictText: 'המודל מפרק טקסט ליחידות קטנות, בוחן את ההקשר ומייצר את ההמשך הסביר והשימושי. היכולת הזו מאפשרת לו להסביר, לסכם, לשכתב, לתכנן ואף לייצר קוד.',
+          tokens: ['המורה','ביקש','פעילות','קצרה','ולכן','המודל','מציע…'],
+          bridgeTitle: 'הגשר החשוב', bridgeText: 'אנחנו מדברים בשפה אנושית. המחשב פועל לפי מבנים וכללים. מודל השפה יכול לתרגם את הכוונה שלנו לטקסט מסודר, טבלה, הוראות, מצגת, תמונה או HTML.',
+          notTitle: 'חשוב לזכור מה הוא לא', nots: ['לא מאגר עובדות שתמיד מעודכן','לא אדם שמכיר את הכיתה שלך בלי שתספר לו','לא מקור שאפשר לסמוך עליו בלי בדיקה','לא תחליף לאחריות ולשיקול הדעת של המורה']
+        },
+        muscles: {
+          kicker: '03 · השרירים החדשים', title: 'שש מיומנויות שכדאי לתרגל',
+          intro: 'פרומפט טוב עוזר, אבל המיומנות האמיתית רחבה יותר: לנהל תהליך משותף עם הכלי.',
+          items: [
+            ['01','הגדרת תוצאה','להתחיל במה צריך להיות בסוף: דף מקורות, משחק, הודעה, מהלך שיעור או טבלה.'],
+            ['02','מתן הקשר','לספר מי התלמידים, מה כבר למדו, מה עובד איתם ומהן המגבלות.'],
+            ['03','ניהול דיאלוג','לא לנסות להכניס הכול לבקשה אחת. לשקף, לתקן, להוסיף ולבחור כיוון.'],
+            ['04','שיפוט ובדיקה','לזהות טעויות, הנחות לא מבוססות, מקורות חלשים ותוצאה שלא מתאימה לכיתה.'],
+            ['05','דיוק סגנון','להראות דוגמה, להסביר מה אהבת ומה לא, ולבקש שינוי ממוקד.'],
+            ['06','חשיבה מערכתית','לעבור מתוצר חד־פעמי לכלי או תהליך שהמחשב יכול לבצע שוב.']
+          ]
+        },
+        prompt: {
+          kicker: '04 · ארבעת חלקי הבקשה', title: 'מטרה. הקשר. תוצר. גבולות.',
+          intro: 'לא חייבים להשתמש בנוסחה קשיחה. אבל במשימה משמעותית, ארבע השאלות האלו עוזרות למודל להבין מה נחשב הצלחה.',
+          formula: [
+            ['מטרה','מה אני רוצה להשיג?'],['הקשר','מה המודל צריך לדעת?'],['תוצר','באיזו צורה אני רוצה לקבל את התוצאה?'],['גבולות','מה אסור לשנות, להמציא או לבצע?']
+          ],
+          builderTitle: 'בונה הבקשות למורה', builderIntro: 'מלאו את ארבעת השדות וקבלו בקשה שאפשר להעתיק לשיחה חדשה.',
+          labels: ['מטרה','הקשר','תוצר רצוי','גבולות ובדיקות'],
+          placeholders: ['לדוגמה: לבנות שיעור שמערב את כל התלמידים','גיל, מספר תלמידים, ידע קודם, זמן וציוד','לדוגמה: מהלך של 40 דקות עם פתיחה, פעילות וסיכום','מה לא לעשות? מה לבדוק? מתי לעצור ולשאול?'],
+          sample: 'מלא דוגמה', build: 'בנה את הבקשה', copy: 'העתק', empty: 'כאן תופיע הבקשה המלאה.',
+          sampleValues: ['בנה מהלך שיעור שמחבר תלמידים בני 12 לסיפור של עם ישראל ומשאיר רעיון אחד ברור.','20 תלמידים במחנה קיץ, בחוץ אחרי יום פעיל. יש מקרן וטלפון. דיון פתוח לא עובד טוב; תחרות, תנועה ומשימה קצרה כן.','מהלך של 40 דקות: פתיחה מסקרנת, פעילות של 15 דקות, לימוד מקור קצר וסרטון לסיום. כתוב באנגלית פשוטה.','אל תמציא מקורות. סמן כל פרט שדורש בדיקה. לפני הכתיבה הצג את מטרת השיעור במשפט אחד.']
+        },
+        uses: {
+          kicker: '05 · שרשרת הערך של המורה', title: 'איפה AI יכול לעזור?',
+          intro: 'לא בכל משימה צריך את כל היכולות. מתחילים מהצורך, ובוחרים את סוג העזרה המתאים.',
+          items: [
+            ['חשיבה','סיעור מוחות','לקחת רעיון גולמי ולפתוח אפשרויות למהלך שיעור, דוגמה, משחק או שאלה מרכזית.','“יש לי נושא אבל לא מהלך. שאל אותי חמש שאלות שיעזרו לזקק אותו.”'],
+            ['תכנון','בניית שיעור','להתאים מטרה, מבנה, זמנים ופעילות לקבוצה מסוימת — ולא ל“תלמיד ממוצע”.','“בנה שלוש פתיחות שונות שמתאימות לקבוצה עייפה בחוץ.”'],
+            ['מחקר','מקורות ומחקר','לאתר כיוונים, מונחים ומקורות אפשריים, ואז לפתוח ולאמת את המקור עצמו.','“מצא מקורות ראשוניים, הוסף קישורים וציין מה לא הצלחת לאמת.”'],
+            ['טקסט','עיבוד חומר','לסכם, לתרגם, לנקות תמלול, לארגן שיחת WhatsApp או להפוך הערות למסמך.','“ארגן לפי: החלטות, משימות, אחראי ומועד. אל תשלים מידע חסר.”'],
+            ['חזותי','תמונות וקומיקס','להפוך סיפור לקומיקס, ציר זמן, כרזה או סיכום חזותי — ולדייק סגנון בסבבים.','“צור תיאור חזותי בהיר למקרן באזור עם הרבה שמש.”'],
+            ['אינטראקטיבי','חידונים ופעילויות','לבנות שאלות, כללי משחק, ניקוד, טיימר ומשוב — בקובץ HTML או באתר.','“אל תציג תשובה עד לחיצה; אפשר להעביר שאלה בלי לחשוף אותה.”'],
+            ['ניהולי','העבודה השחורה','לנסח הודעות, למיין משוב, להשוות גרסאות ולחלץ משימות מתוך הרבה טקסט.','“שמור על השמות והתאריכים בדיוק; סמן סתירות במקום להכריע.”'],
+            ['מערכתי','בניית פונקציה','להגדיר פעולה שחוזרת על עצמה ולהפוך אותה לכלי: טופס, מעקב, מחולל או תהליך אוטומטי.','“לפני קוד, שיקף את המשתמש, הפעולה, המידע וכלל ההצלחה.”']
+          ]
+        },
+        caseStudy: {
+          kicker: 'מקרה בוחן', title: 'מחידון תנ״ך לרעיון גדול יותר',
+          intro: 'החידון הוא תוצר. אבל הלמידה המשמעותית הייתה הדרך: התוכן, הכללים, העיצוב והבדיקה נבנו בדיאלוג.',
+          stickyTitle: 'המורה לא כתב את הקוד. הוא ביים את המוצר.',
+          stickyText: 'הידע החינוכי נשאר אצל המורה: מי הקהל, מה צריך לקרות, מה הוגן במשחק ומה יוצר מעורבות. ה־AI עזר להפוך את ההחלטות לממשק עובד.',
+          steps: [
+            ['מתחילים בצורך','צריך משחק תחרותי שמחזיק קבוצה למשך 40 דקות.'],
+            ['בונים את התוכן יחד','מפתחים שאלות, תשובות, רמות וקבוצות — ובודקים דיוק.'],
+            ['מגדירים כללים','טיימר, תורות, ניקוד, מעבר שאלה וחשיפת תשובה רק בלחיצה.'],
+            ['יוצרים גרסה ראשונה','המודל מתרגם את התיאור ל־HTML, עיצוב והתנהגות.'],
+            ['בודקים כמו משתמש','מנסים בפועל, מגלים איפה הממשק מבלבל ומה איטי.'],
+            ['מדייקים','לא “תעשה יפה יותר”, אלא: מה בהיר מדי, מה קטן, מה חסר ומה צריך לקרות בלחיצה.'],
+            ['שומרים ומשתפים','מייצרים קובץ עצמאי או אתר שאפשר לפתוח ולהעביר למורים אחרים.']
+          ]
+        },
+        html: {
+          kicker: '06 · מהו HTML?', title: 'אתר אינטרנט יכול להיות פשוט קובץ.',
+          intro: 'HTML הוא המבנה של דף אינטרנט. מוסיפים לו CSS לעיצוב ו־JavaScript להתנהגות. שלושתם יכולים להיכלל בקובץ אחד שנפתח בדפדפן.',
+          layers: [
+            ['HTML — המבנה','כותרות, טקסט, תמונות, כפתורים ואזורים בדף.'],
+            ['CSS — המראה','צבעים, גדלים, רווחים, התאמה לנייד וסגנון חזותי.'],
+            ['JavaScript — ההתנהגות','טיימר, ניקוד, הסתרת תשובה, תפריטים וכללי משחק.']
+          ],
+          offlineTitle: 'מה יכול לעבוד גם בלי אתר?', offline: ['תוכן ועיצוב','חידונים ומשחקים מקומיים','טיימר וניקוד במכשיר','מעבר שפה ותפריטים'],
+          onlineTitle: 'מתי צריך שירות מקוון?', online: ['שמירת מידע משותף בין מכשירים','התחברות משתמשים','שליחת מידע וגבייה','עדכון נתונים בזמן אמת'],
+          timerTitle: 'טיימר קטן', timerStart: 'התחל', timerReset: 'איפוס',
+          quizTitle: 'שאלה לדוגמה', quizQ: 'מה הדבר הראשון שמגדירים לפני שבונים כלי?', quizReveal: 'הצג תשובה', quizA: 'את הצורך, המשתמש והתוצאה הרצויה.'
+        },
+        vibe: {
+          kicker: '07 · Vibe Coding למורים', title: 'מתארים צורך. בונים. בודקים. מתקנים.',
+          intro: 'Vibe Coding אינו קסם ואינו “תן ל־AI לבנות הכול”. זו דרך לנהל פיתוח באמצעות שפה טבעית, גם בלי לדעת לכתוב כל שורת קוד.',
+          steps: [
+            ['צורך קטן ואמיתי','בחרו בעיה שחוזרת אצלכם ושאפשר לבדוק במהירות.','“לפני שנבנה, עזור לי להגדיר את הבעיה במשפט אחד.”'],
+            ['משתמש ורגע שימוש','מי ישתמש? באיזה מכשיר? בכיתה, בבית או בישיבת צוות?','“תאר שלושה תרחישי שימוש קצרים והצף הבדלים ביניהם.”'],
+            ['התוצאה המינימלית','מהי הגרסה הקטנה ביותר שכבר נותנת ערך?','“הפרד בין חובה לגרסה הראשונה לבין רעיונות לעתיד.”'],
+            ['חוקים ותוכן','קובעים מה מופיע, מה קורה בלחיצה ומה אסור לקרות.','“הפוך את התיאור שלי לרשימת כללים שאוכל לאשר.”'],
+            ['גרסה ראשונה','מבקשים תוצר עובד ומוגבל — למשל קובץ HTML יחיד.','“בנה קובץ אחד שעובד בלי התקנות ובלי חיבור לשרת.”'],
+            ['בדיקה ותיקון','מנסים במסך ובמכשיר האמיתי; מדווחים על התנהגות, לא רק על תחושה.','“בלחיצה על מעבר, התשובה נחשפת. היא צריכה להישאר מוסתרת.”'],
+            ['שיתוף ותחזוקה','שומרים את הקובץ, ההנחיות והתוכן כך שאדם אחר יוכל להמשיך.','“הכן גרסה להורדה וקובץ הסבר קצר לעדכון עתידי.”']
+          ]
+        },
+        safety: {
+          kicker: '08 · אמון, מחקר ואחריות', title: 'תוצאה משכנעת עדיין יכולה להיות שגויה.',
+          intro: 'המודל מצטיין ביצירת תשובה שנשמעת מתאימה. לכן צריך להפריד בין רעיון שימושי לבין עובדה מאומתת.',
+          dangerTitle: 'עוצרים ובודקים כאשר…', danger: ['יש ציטוט, פסוק, תאריך או מספר','התשובה תלויה במידע עדכני','המודל מציג מקור שלא פתחתם בעצמכם','המידע נוגע לתלמיד מסוים או להחלטה רגישה','הטקסט נשמע בטוח אבל לא מציג בסיס'],
+          goodTitle: 'נוהל בדיקה קצר', good: ['בקשו קישורים ומקורות ראשוניים','פתחו את המקור ובדקו שהוא אומר את הנטען','השוו למקור נוסף כשיש משמעות לטעות','בקשו מהמודל לסמן הנחות ופערים','שמרו את שיקול הדעת והאישור הסופי אצלכם'],
+          privacyTitle: 'פרטיות תלמידים', privacyText: 'אל תעלו שמות מלאים, פרטים מזהים, מידע רפואי, הערכות רגישות או שיחות פרטיות ללא הרשאה ומדיניות מתאימה. כשאפשר — השמיטו שמות, טשטשו פרטים ועבדו עם דוגמאות אנונימיות.',
+          sourceTitle: 'מחקר טוב מתחיל בגבולות', sourceText: 'הגדירו תקופה, סוג מקורות, שפה, רמת הוכחה ומה לעשות כאשר אין מידע. עדיף פער גלוי על פני תשובה בטוחה שהומצאה.'
+        },
+        prompts: {
+          kicker: '09 · ערכת התחלה', title: 'בקשות מוכנות למורים',
+          intro: 'אפשר להעתיק, להדביק ולשנות את הפרטים. התייחסו אליהן כנקודת פתיחה לשיחה, לא כנוסחת קסם.',
+          copy: 'העתק בקשה', copied: 'הועתק',
+          items: [
+            ['זיקוק רעיון לשיעור','יש לי רעיון גולמי לשיעור: [הדביקו כאן]. אל תבנה עדיין את השיעור. שאל אותי עד חמש שאלות קצרות שיעזרו להגדיר מטרה אחת ברורה, קהל יעד, מגבלות ורגע השיא של השיעור. לאחר שאענה, שיקף את ההחלטות לאישור.'],
+            ['בניית מהלך שיעור','בנה מהלך שיעור בנושא [נושא] עבור [גיל ומספר תלמידים]. הזמן הוא [זמן], הציוד הוא [ציוד], ומה שעובד עם הקבוצה הוא [מה עובד]. התוצר צריך לכלול מטרה אחת, פתיחה, פעילות, לימוד קצר וסיכום. סמן מידע או מקורות שדורשים בדיקה.'],
+            ['הפיכת חומר לפעילות','קרא את החומר המצורף. הצע שלוש דרכים שונות להפוך אותו לפעילות שבה כל תלמיד חייב לבחור, לזוז או לבצע משימה ברורה. הימנע מדיון פתוח. לכל אפשרות ציין זמן, ציוד ומה בדיוק התלמידים עושים.'],
+            ['יצירת תמונה לימודית','כתוב פרומפט מפורט ליצירת תמונה שמסבירה את [הרעיון]. הקהל הוא [גיל]. התמונה צריכה להיות בהירה, בעלת ניגודיות גבוהה, עם מעט טקסט וקריאה גם במקרן. לפני הפרומפט, הצע קומפוזיציה אחת והסבר מה התלמיד אמור להבין במבט ראשון.'],
+            ['מחקר עם מקורות','בצע מחקר על [נושא] במסגרת [תקופה/אזור]. השתמש במקורות ראשוניים או מוסדיים ככל האפשר. לכל טענה מרכזית הוסף קישור ישיר. הפרד בין עובדה, פרשנות והשערה. אם אינך מצליח לאמת פרט — כתוב זאת במפורש ואל תשלים אותו.'],
+            ['סיכום שיחה ארוכה','ארגן את הטקסט הבא לארבעה חלקים: החלטות, משימות, אחראי ומועד. שמור שמות, מספרים ותאריכים בדיוק כפי שנכתבו. אל תסיק מי אחראי אם הדבר לא נאמר. הוסף בסוף רשימת פערים וסתירות שדורשים בירור.'],
+            ['הגדרת כלי אינטראקטיבי','אני רוצה לבנות כלי שעוזר ל[משתמש] לבצע [פעולה]. לפני כתיבת קוד, שיקף: הבעיה, המשתמש, רגע השימוש, המידע שנכנס, הפעולות האפשריות, מה נחשב הצלחה ומה מחוץ לגרסה הראשונה. שאל רק שאלות שישנו מהותית את התכנון.'],
+            ['בדיקת תוצר','בדוק את התוצר מול הבקשה המקורית שלי. צור טבלה עם: דרישה, האם בוצעה, ראיה מתוך התוצר, בעיה והצעת תיקון. בדוק גם שמות, תאריכים, מקורות, התאמה לקהל ובהירות. אל תשכתב לפני שתציג את הבדיקה.']
+          ]
+        },
+        practice: {
+          kicker: '10 · תרגול של 30 דקות', title: 'צאו עם דבר קטן שעובד.',
+          intro: 'המטרה אינה לבנות מערכת גדולה. המטרה היא לחוות מחזור אחד מלא: צורך → גרסה → בדיקה → תיקון.',
+          steps: [
+            ['0–5 דקות','בחרו צורך','משהו קטן, אמיתי וחוזר מעבודת ההוראה.'],
+            ['5–10 דקות','הגדירו','משתמש, תוצאה, הקשר וגבולות.'],
+            ['10–22 דקות','בנו','בקשו גרסה ראשונה ותקנו אותה בשני סבבים.'],
+            ['22–30 דקות','בדקו','תנו לאדם אמיתי לנסות בלי להסביר לו. רשמו תיקון אחד.']
+          ],
+          challenge: 'אתגר מומלץ: בנו כלי קטן שאפשר לשלוח למורה אחר — דף פעילות, מחולל, חידון, סיכום חזותי או HTML אינטראקטיבי.'
+        },
+        finish: {
+          kicker: 'לסיום', title: 'מה לקחת מכאן?',
+          intro: 'לא צריך לשלוט בכל היכולות. בוחרים צורך אחד, מתחילים בשפה רגילה ומתקדמים באמצעות משוב.',
+          checklistTitle: 'לפני שמשתפים תוצר', checklist: ['המטרה והקהל ברורים','התוכן נבדק מול המקורות','שמות, מספרים ותאריכים נכונים','אין מידע אישי שלא צריך להיות שם','הקישורים והכפתורים עובדים','בדקתי בנייד או במקרן הרלוונטי','אדם נוסף ניסה בלי הדרכה','שמורה גרסה שאפשר לחזור אליה'],
+          resourcesTitle: 'להמשך למידה', resourcesText: 'החומר נשען גם על הנחיות OpenAI לעבודה טבעית עם ChatGPT: להגדיר מטרה, הקשר, תוצר וגבולות; לבחון את הטיוטה ולהמשיך באמצעות משוב.',
+          resources: [['הנחיות לכתיבת בקשות','https://learn.chatgpt.com/docs/prompting'],['מדריך השימוש ב־ChatGPT','https://learn.chatgpt.com/docs/use-chatgpt']],
+          download: 'הורדת קובץ HTML', print: 'הדפסה / שמירה כ־PDF', top: 'חזרה למעלה',
+          footer: 'נבנה ככלי למידה פתוח למורים. התחילו קטן, בדקו עם אדם אמיתי ושפרו.'
+        },
+        cta: {
+          kicker: '11 · סדנה לצוות', title: 'רוצים סדנה למורים בבית הספר שלכם?',
+          text: 'אם המדריך נראה לכם שימושי ואתם רוצים לעבור עליו עם הצוות שלכם בסדנה מודרכת — פרונטלית או מקוונת — אשמח לדבר. כתבו לי בוואטסאפ ונמצא זמן שמתאים.',
+          button: 'לדבר איתי בוואטסאפ'
+        },
+        misc: {
+          copied: 'הועתק ללוח', builderMissing: 'מלאו לפחות את המטרה וההקשר',
+          share: 'משתף מדריך מעשי: TEACH:AI — מהרעיון לכלי עובד',
+          shareLabel: 'שיתוף ב-WhatsApp', whatsappAria: 'יצירת קשר ב-WhatsApp',
+          whatsappMessage: 'היי גדעון, הגעתי דרך המדריך TEACH:AI. אשמח לשמוע על אפשרות לסדנה או הדרכה לצוות המורים שלי.'
+        }
+      },
+      en: {
+        dir: 'ltr', lang: 'en', switchLabel: 'עברית', brand: 'TEACH:AI', brandSub: 'from idea to working tool',
+        title: 'TEACH:AI — From Idea to Working Tool',
+        nav: [['mindset','Mindset'],['muscles','Skills'],['uses','Uses'],['html','HTML'],['vibe','Vibe Coding'],['safety','Verify'],['practice','Practice']],
+        hero: {
+          eyebrow: 'A practical guide for educators', title: 'Don’t just ask. Think, create, and build.',
+          lead: 'ChatGPT and other AI tools are a new working environment. The goal is not to memorize magic commands. It is to develop a way of working: define a need, provide context, build a draft, test it, and improve it until you have something you can actually use.',
+          primary: 'Start with the mindset', secondary: 'Jump to practice', note: ['Hebrew and English','Works on desktop and mobile','Includes interactive practice'],
+          human: 'I have a lesson idea, but it is still messy.', ai: 'Let’s define the goal, audience, constraints, and desired result.', result: 'The idea becomes a lesson flow — and later, an interactive game.',
+          humanLabel: 'THE TEACHER', aiLabel: 'THE CONVERSATION', resultLabel: 'THE RESULT', caption: 'The power is not in the first answer. It is in the process between idea and result.'
+        },
+        mindset: {
+          kicker: '01 · A new mindset', title: 'It is a new tool. So we have to learn how to use it.',
+          intro: 'When slides and spreadsheets entered the workplace, knowing that they existed was not enough. We had to practice a new way of thinking. The same is true for language models.',
+          quote: 'The key skill is not “knowing AI.” It is turning a human need into a clear working process.',
+          copy: 'The teacher brings the educational goal, knowledge of the students, taste, and judgment. The model brings speed, variations, information processing, and the ability to turn human language into text, images, and sometimes code. The value appears when the two work together.',
+          analogies: [
+            ['Slides','We learn not only to write text, but to organize a visual message.'],
+            ['Spreadsheets','We learn not only to enter numbers, but to build logic and a process.'],
+            ['Language models','We learn not only to ask a question, but to guide a conversation toward a result.']
+          ]
+        },
+        model: {
+          kicker: '02 · Under the hood', title: 'What is a language model?',
+          intro: 'In simple terms, it is a system trained on patterns in very large amounts of text that generates a continuation suited to the context. It can sound very human — but it is not a person and not a truth machine.',
+          predictTitle: 'It recognizes patterns and predicts what comes next', predictText: 'The model breaks text into small units, considers the context, and generates a likely and useful continuation. That ability lets it explain, summarize, rewrite, plan, and even generate code.',
+          tokens: ['The','teacher','asked','for','a','short','activity…'],
+          bridgeTitle: 'The important bridge', bridgeText: 'We speak in human language. Computers act through structures and rules. A language model can translate our intent into organized text, a table, instructions, slides, an image, or HTML.',
+          notTitle: 'Remember what it is not', nots: ['Not a database of facts that is always current','Not a person who knows your class unless you explain it','Not a source you can trust without checking','Not a replacement for a teacher’s responsibility and judgment']
+        },
+        muscles: {
+          kicker: '03 · The new muscles', title: 'Six skills worth practicing',
+          intro: 'A good prompt helps, but the real skill is broader: guiding a shared process with the tool.',
+          items: [
+            ['01','Define the result','Start with what should exist at the end: a source sheet, game, message, lesson flow, or table.'],
+            ['02','Provide context','Explain who the students are, what they know, what works for them, and the constraints.'],
+            ['03','Guide a dialogue','Do not force everything into one prompt. Reflect, correct, add, and choose a direction.'],
+            ['04','Judge and verify','Catch errors, unsupported assumptions, weak sources, and results that do not fit the class.'],
+            ['05','Refine the style','Show an example, explain what you like and dislike, and request a focused change.'],
+            ['06','Think in systems','Move from a one-time output to a tool or process the computer can repeat.']
+          ]
+        },
+        prompt: {
+          kicker: '04 · Four parts of a request', title: 'Goal. Context. Output. Boundaries.',
+          intro: 'You do not need a rigid formula. But for a meaningful task, these four questions help the model understand what success looks like.',
+          formula: [['Goal','What am I trying to achieve?'],['Context','What does the model need to know?'],['Output','What form should the result take?'],['Boundaries','What must not change, be invented, or be done?']],
+          builderTitle: 'Teacher prompt builder', builderIntro: 'Fill in the four fields and create a prompt you can copy into a new conversation.',
+          labels: ['Goal','Context','Desired output','Boundaries and checks'],
+          placeholders: ['Example: Build a lesson that involves every student','Age, group size, prior knowledge, time, and equipment','Example: A 40-minute plan with opening, activity, and closing','What should it avoid? What should it verify? When should it stop and ask?'],
+          sample: 'Load an example', build: 'Build the prompt', copy: 'Copy', empty: 'Your complete prompt will appear here.',
+          sampleValues: ['Build a lesson that connects 12-year-olds to the story of the Jewish people and leaves them with one clear idea.','20 students at summer camp, outdoors after an active day. We have a projector and phone. Open discussion does not work well; competition, movement, and a short clear task do.','A 40-minute flow: intriguing opening, 15-minute activity, short source study, and a video ending. Write in simple English.','Do not invent sources. Flag every detail that needs checking. Before writing, state the lesson goal in one sentence.']
+        },
+        uses: {
+          kicker: '05 · The teacher value chain', title: 'Where can AI help?',
+          intro: 'Not every task needs every capability. Start with the need and choose the right kind of help.',
+          items: [
+            ['Thinking','Brainstorming','Turn a rough idea into possible lesson flows, examples, games, or a central question.','“I have a topic but no flow. Ask me five questions that will sharpen it.”'],
+            ['Planning','Lesson design','Fit the goal, structure, timing, and activity to a real group — not an “average student.”','“Create three different openings for a tired outdoor group.”'],
+            ['Research','Sources and research','Find directions, terms, and possible sources, then open and verify the source itself.','“Find primary sources, add links, and state what you could not verify.”'],
+            ['Text','Transforming material','Summarize, translate, clean a transcript, organize a WhatsApp chat, or turn notes into a document.','“Organize by decisions, tasks, owner, and deadline. Do not fill missing facts.”'],
+            ['Visual','Images and comics','Turn a story into a comic, timeline, poster, or visual summary, then refine the style in rounds.','“Create a bright visual concept for a projector in strong sunlight.”'],
+            ['Interactive','Quizzes and activities','Build questions, game rules, scoring, timers, and feedback in an HTML file or website.','“Do not reveal the answer until a click; allow a pass without showing it.”'],
+            ['Operations','The busywork','Draft messages, sort feedback, compare versions, and extract tasks from large amounts of text.','“Keep names and dates exact; flag contradictions instead of resolving them.”'],
+            ['Systems','Build a function','Define a repeated action and turn it into a tool: form, tracker, generator, or automated workflow.','“Before code, reflect the user, action, information, and success rule.”']
+          ]
+        },
+        caseStudy: {
+          kicker: 'CASE STUDY', title: 'From a Bible quiz to a bigger idea',
+          intro: 'The quiz is the product. The deeper learning was the journey: content, rules, design, and testing were built through dialogue.',
+          stickyTitle: 'The teacher did not write the code. He directed the product.',
+          stickyText: 'The educational knowledge stayed with the teacher: the audience, desired experience, fair rules, and what creates engagement. AI helped turn those decisions into a working interface.',
+          steps: [
+            ['Start with a need','We need a competitive game that can hold a group for 40 minutes.'],
+            ['Build the content together','Develop questions, answers, levels, and teams — and verify accuracy.'],
+            ['Define the rules','Timer, turns, scoring, passing, and revealing the answer only on click.'],
+            ['Create a first version','The model translates the description into HTML, design, and behavior.'],
+            ['Test like a user','Try it for real and find where the interface is confusing or slow.'],
+            ['Refine precisely','Not “make it prettier,” but what is too bright, too small, missing, or should happen on click.'],
+            ['Save and share','Create a standalone file or site that can be opened and passed to other teachers.']
+          ]
+        },
+        html: {
+          kicker: '06 · What is HTML?', title: 'A website can be just a file.',
+          intro: 'HTML is the structure of a web page. Add CSS for design and JavaScript for behavior. All three can live in one file that opens in a browser.',
+          layers: [['HTML — structure','Headings, text, images, buttons, and page areas.'],['CSS — appearance','Colors, sizes, spacing, mobile layout, and visual style.'],['JavaScript — behavior','Timers, scoring, hidden answers, menus, and game rules.']],
+          offlineTitle: 'What can work without a hosted site?', offline: ['Content and design','Local quizzes and games','A timer and score on one device','Language switching and menus'],
+          onlineTitle: 'When do you need an online service?', online: ['Shared data across devices','User sign-in','Sending information and payments','Live data updates'],
+          timerTitle: 'A tiny timer', timerStart: 'Start', timerReset: 'Reset',
+          quizTitle: 'Sample question', quizQ: 'What should you define first before building a tool?', quizReveal: 'Reveal answer', quizA: 'The need, the user, and the desired result.'
+        },
+        vibe: {
+          kicker: '07 · Vibe Coding for teachers', title: 'Describe a need. Build. Test. Correct.',
+          intro: 'Vibe Coding is not magic and not “let AI build everything.” It is a way to guide software development in natural language, even if you do not write every line of code.',
+          steps: [
+            ['A small real need','Choose a repeated problem you can test quickly.','“Before we build, help me define the problem in one sentence.”'],
+            ['User and moment','Who will use it? On what device? In class, at home, or in a staff meeting?','“Describe three short use cases and highlight the differences.”'],
+            ['Minimum useful result','What is the smallest version that already gives value?','“Separate first-version requirements from ideas for later.”'],
+            ['Rules and content','Decide what appears, what happens on click, and what must never happen.','“Turn my description into a rule list I can approve.”'],
+            ['First version','Ask for a working, bounded output — for example, one HTML file.','“Build one file that works without installation or a server.”'],
+            ['Test and correct','Try it on the real screen and device; report behavior, not only feelings.','“When I click Pass, the answer appears. It must stay hidden.”'],
+            ['Share and maintain','Save the file, instructions, and content so someone else can continue.','“Prepare a downloadable version and short update instructions.”']
+          ]
+        },
+        safety: {
+          kicker: '08 · Trust, research, and responsibility', title: 'A convincing result can still be wrong.',
+          intro: 'The model is excellent at creating an answer that sounds appropriate. We must separate a useful idea from a verified fact.',
+          dangerTitle: 'Pause and check when…', danger: ['There is a quotation, verse, date, or number','The answer depends on current information','The model names a source you have not opened','The information concerns a specific student or sensitive decision','The text sounds confident but shows no basis'],
+          goodTitle: 'A short verification routine', good: ['Ask for direct links and primary sources','Open the source and check that it supports the claim','Compare with another source when an error matters','Ask the model to flag assumptions and gaps','Keep final judgment and approval with the teacher'],
+          privacyTitle: 'Student privacy', privacyText: 'Do not upload full names, identifying details, medical information, sensitive evaluations, or private conversations without appropriate permission and policy. When possible, remove names, mask details, and use anonymous examples.',
+          sourceTitle: 'Good research starts with boundaries', sourceText: 'Define the date range, source type, language, standard of evidence, and what to do when information is missing. A visible gap is better than a confident invention.'
+        },
+        prompts: {
+          kicker: '09 · Starter kit', title: 'Ready-to-use teacher prompts',
+          intro: 'Copy, paste, and change the details. Treat each one as the start of a conversation, not a magic formula.',
+          copy: 'Copy prompt', copied: 'Copied',
+          items: [
+            ['Sharpen a lesson idea','I have a rough lesson idea: [paste it here]. Do not build the lesson yet. Ask me up to five short questions that will define one clear goal, the audience, constraints, and the peak moment. After I answer, reflect the decisions for approval.'],
+            ['Build a lesson flow','Build a lesson on [topic] for [age and group size]. The time is [time], equipment is [equipment], and what works with this group is [what works]. Include one goal, an opening, activity, short learning segment, and closing. Flag facts or sources that need checking.'],
+            ['Turn content into an activity','Read the attached material. Suggest three different ways to turn it into an activity where every student must choose, move, or complete a clear task. Avoid open discussion. For each option, give time, equipment, and exactly what students do.'],
+            ['Create an educational image','Write a detailed image-generation prompt that explains [idea] for [age]. It should be bright, high contrast, use little text, and remain readable on a projector. Before writing the prompt, propose one composition and explain what students should understand at first glance.'],
+            ['Research with sources','Research [topic] within [date range/region]. Prefer primary or institutional sources. Add a direct link for every major claim. Separate fact, interpretation, and hypothesis. If you cannot verify a detail, say so and do not fill it in.'],
+            ['Summarize a long conversation','Organize the following text into four parts: decisions, tasks, owner, and deadline. Keep names, numbers, and dates exactly as written. Do not infer an owner if one was not stated. End with gaps and contradictions that need clarification.'],
+            ['Define an interactive tool','I want to build a tool that helps [user] do [action]. Before writing code, reflect: the problem, user, moment of use, input information, possible actions, success criteria, and what is outside the first version. Ask only questions that would materially change the plan.'],
+            ['Review a result','Check the result against my original request. Create a table with: requirement, completed or not, evidence in the result, problem, and proposed fix. Also check names, dates, sources, audience fit, and clarity. Do not rewrite before showing the review.']
+          ]
+        },
+        practice: {
+          kicker: '10 · A 30-minute practice', title: 'Leave with one small thing that works.',
+          intro: 'The goal is not to build a large system. Complete one full cycle: need → version → test → correction.',
+          steps: [['0–5 minutes','Choose a need','Something small, real, and repeated in your teaching work.'],['5–10 minutes','Define it','User, result, context, and boundaries.'],['10–22 minutes','Build it','Request a first version and improve it through two rounds.'],['22–30 minutes','Test it','Let a real person try it without instructions. Record one change.']],
+          challenge: 'Recommended challenge: build something you can send to another teacher — an activity page, generator, quiz, visual summary, or interactive HTML.'
+        },
+        finish: {
+          kicker: 'TO FINISH', title: 'What should you take with you?',
+          intro: 'You do not need to master every capability. Choose one need, start in ordinary language, and move forward through feedback.',
+          checklistTitle: 'Before sharing a result', checklist: ['The goal and audience are clear','The content was checked against sources','Names, numbers, and dates are correct','No unnecessary personal information is included','Links and buttons work','I tested on the relevant phone or projector','Another person tried it without coaching','A recoverable version is saved'],
+          resourcesTitle: 'Continue learning', resourcesText: 'This guide also draws on OpenAI’s guidance for natural work with ChatGPT: describe the goal, context, output, and boundaries; review the draft and refine it through follow-up messages.',
+          resources: [['Prompting guide','https://learn.chatgpt.com/docs/prompting'],['Use ChatGPT guide','https://learn.chatgpt.com/docs/use-chatgpt']],
+          download: 'Download HTML file', print: 'Print / save as PDF', top: 'Back to top',
+          footer: 'Built as an open learning tool for educators. Start small, test with a real person, and improve.'
+        },
+        cta: {
+          kicker: '11 · Staff workshop', title: 'Want a workshop for your school’s teachers?',
+          text: 'If this guide feels useful and you would like to go through it with your staff in a guided workshop — in person or online — I would love to talk. Message me on WhatsApp and we will find a time.',
+          button: 'Talk to me on WhatsApp'
+        },
+        misc: {
+          copied: 'Copied to clipboard', builderMissing: 'Fill in at least the goal and context',
+          share: 'Sharing a practical guide: TEACH:AI — From Idea to Working Tool',
+          shareLabel: 'Share via WhatsApp', whatsappAria: 'Contact via WhatsApp',
+          whatsappMessage: 'Hi Gidon, I found you through the TEACH:AI guide. I would like to hear about a workshop or training session for my teaching staff.'
+        }
+      }
+    };
+
+    let lang = localStorage.getItem('aiTeachersLang') || 'he';
+    let timerValue = 30;
+    let timerId = null;
+
+    const esc = (s) => String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    const cardList = (items, type) => items.map((x, i) => {
+      if (type === 'muscle') return `<article class="muscle"><div class="muscle-icon">${x[0]}</div><h3>${esc(x[1])}</h3><p>${esc(x[2])}</p></article>`;
+      if (type === 'use') return `<article class="use-card" data-step="${String(i+1).padStart(2,'0')}"><span class="use-tag">${esc(x[0])}</span><h3>${esc(x[1])}</h3><p>${esc(x[2])}</p><div class="example-box">${esc(x[3])}</div></article>`;
+      return '';
+    }).join('');
+
+    function sectionHead(kicker, title, intro) {
+      return `<div class="section-head"><div><div class="section-kicker">${esc(kicker)}</div><h2>${esc(title)}</h2></div><p class="section-intro">${esc(intro)}</p></div>`;
+    }
+
+    function render() {
+      const t = content[lang];
+      document.documentElement.lang = t.lang;
+      document.documentElement.dir = t.dir;
+      document.title = t.title;
+      document.getElementById('brandTitle').textContent = t.brand;
+      document.getElementById('brandSub').textContent = t.brandSub;
+      document.getElementById('langBtn').textContent = t.switchLabel;
+      document.getElementById('desktopNav').innerHTML = t.nav.map(n => `<a href="#${n[0]}">${esc(n[1])}</a>`).join('');
+      document.getElementById('mobilePanel').innerHTML = t.nav.map(n => `<a href="#${n[0]}">${esc(n[1])}</a>`).join('');
+      const currentUrl = location.protocol === 'file:' ? '' : location.href;
+      const waBtn = document.getElementById('whatsappBtn');
+      waBtn.href = `https://wa.me/972548183020?text=${encodeURIComponent(t.misc.whatsappMessage)}`;
+      waBtn.setAttribute('aria-label', t.misc.whatsappAria);
+
+      document.getElementById('app').innerHTML = `
+        <section class="hero" id="top">
+          <div class="container hero-grid">
+            <div>
+              <div class="eyebrow">${esc(t.hero.eyebrow)}</div>
+              <h1>${esc(t.hero.title)}</h1>
+              <p class="hero-lead">${esc(t.hero.lead)}</p>
+              <div class="hero-actions"><a class="btn btn-primary" href="#mindset">${esc(t.hero.primary)} ↓</a><a class="btn btn-secondary" href="#practice">${esc(t.hero.secondary)}</a></div>
+              <div class="hero-note">${t.hero.note.map(x => `<span>${esc(x)}</span>`).join('')}</div>
+            </div>
+            <div class="conversation-art" aria-label="Conversation from idea to result">
+              <div class="chat-card chat-human"><span class="chat-label">${esc(t.hero.humanLabel)}</span>${esc(t.hero.human)}</div>
+              <div class="chat-card chat-ai"><span class="chat-label">${esc(t.hero.aiLabel)}</span>${esc(t.hero.ai)}</div>
+              <div class="chat-card chat-result"><span class="chat-label">${esc(t.hero.resultLabel)}</span>${esc(t.hero.result)}</div>
+              <div class="art-caption">${esc(t.hero.caption)}</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section alt" id="mindset"><div class="container">
+          ${sectionHead(t.mindset.kicker, t.mindset.title, t.mindset.intro)}
+          <div class="big-idea"><div class="big-idea-quote">${esc(t.mindset.quote)}</div><div class="big-idea-copy">${esc(t.mindset.copy)}</div></div>
+          <div class="analogy-row">${t.mindset.analogies.map((x,i)=>`<article class="analogy"><span class="num">0${i+1}</span><h3>${esc(x[0])}</h3><p>${esc(x[1])}</p></article>`).join('')}</div>
+        </div></section>
+
+        <section class="section"><div class="container">
+          ${sectionHead(t.model.kicker, t.model.title, t.model.intro)}
+          <div class="model-grid">
+            <article class="model-card highlight"><h3>${esc(t.model.predictTitle)}</h3><p>${esc(t.model.predictText)}</p><div class="token-line">${t.model.tokens.map(x=>`<span>${esc(x)}</span>`).join('')}</div><h3>${esc(t.model.bridgeTitle)}</h3><p>${esc(t.model.bridgeText)}</p></article>
+            <article class="model-card"><h3>${esc(t.model.notTitle)}</h3><ul class="not-list">${t.model.nots.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></article>
+          </div>
+        </div></section>
+
+        <section class="section alt" id="muscles"><div class="container">
+          ${sectionHead(t.muscles.kicker, t.muscles.title, t.muscles.intro)}
+          <div class="cards-3">${cardList(t.muscles.items,'muscle')}</div>
+        </div></section>
+
+        <section class="section"><div class="container">
+          ${sectionHead(t.prompt.kicker, t.prompt.title, t.prompt.intro)}
+          <div class="formula">${t.prompt.formula.map(x=>`<article class="formula-card"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></article>`).join('')}</div>
+          <div class="builder">
+            <h3>${esc(t.prompt.builderTitle)}</h3><p>${esc(t.prompt.builderIntro)}</p>
+            <div class="builder-grid">${t.prompt.labels.map((label,i)=>`<div class="field"><label for="builder${i}">${esc(label)}</label><textarea id="builder${i}" placeholder="${esc(t.prompt.placeholders[i])}"></textarea></div>`).join('')}</div>
+            <div class="builder-actions"><button class="btn btn-secondary" id="sampleBtn" type="button">${esc(t.prompt.sample)}</button><button class="btn btn-primary" id="buildBtn" type="button">${esc(t.prompt.build)}</button><button class="btn btn-secondary" id="copyBuilderBtn" type="button">${esc(t.prompt.copy)}</button></div>
+            <div class="builder-output" id="builderOutput">${esc(t.prompt.empty)}</div>
+          </div>
+        </div></section>
+
+        <section class="section alt" id="uses"><div class="container">
+          ${sectionHead(t.uses.kicker, t.uses.title, t.uses.intro)}
+          <div class="uses">${cardList(t.uses.items,'use')}</div>
+        </div></section>
+
+        <section class="section dark"><div class="container">
+          ${sectionHead(t.caseStudy.kicker, t.caseStudy.title, t.caseStudy.intro)}
+          <div class="case-grid"><aside class="case-sticky"><strong>${esc(t.caseStudy.stickyTitle)}</strong><p>${esc(t.caseStudy.stickyText)}</p></aside><div class="timeline">${t.caseStudy.steps.map(x=>`<article class="timeline-item"><h3>${esc(x[0])}</h3><p>${esc(x[1])}</p></article>`).join('')}</div></div>
+        </div></section>
+
+        <section class="section" id="html"><div class="container">
+          ${sectionHead(t.html.kicker, t.html.title, t.html.intro)}
+          <div class="html-demo">
+            <div class="html-layers">${t.html.layers.map((x,i)=>`<article class="layer"><span class="code-word">${['&lt;HTML&gt;','{ CSS }','JavaScript( )'][i]}</span><b>${esc(x[0])}</b><span>${esc(x[1])}</span></article>`).join('')}</div>
+            <div class="browser-window"><div class="browser-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="browser-body">
+              <div class="model-grid"><div><h3>${esc(t.html.offlineTitle)}</h3><ul class="check-list">${t.html.offline.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div><h3>${esc(t.html.onlineTitle)}</h3><ul class="check-list">${t.html.online.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div></div>
+              <div class="demo-row"><div class="mini-demo"><b>${esc(t.html.timerTitle)}</b><div class="timer-number" id="timerNumber">30</div><button class="tiny-btn" id="timerStart">${esc(t.html.timerStart)}</button> <button class="tiny-btn" id="timerReset">${esc(t.html.timerReset)}</button></div><div class="mini-demo"><b>${esc(t.html.quizTitle)}</b><p>${esc(t.html.quizQ)}</p><button class="tiny-btn" id="revealBtn">${esc(t.html.quizReveal)}</button><div class="answer" id="quizAnswer">${esc(t.html.quizA)}</div></div></div>
+            </div></div>
+          </div>
+        </div></section>
+
+        <section class="section alt" id="vibe"><div class="container">
+          ${sectionHead(t.vibe.kicker, t.vibe.title, t.vibe.intro)}
+          <div class="vibe-steps">${t.vibe.steps.map(x=>`<article class="vibe-step"><div><h3>${esc(x[0])}</h3><p>${esc(x[1])}</p></div><button class="copy-btn" type="button" data-copy="${esc(x[2])}">${esc(t.prompts.copy)}</button></article>`).join('')}</div>
+        </div></section>
+
+        <section class="section dark" id="safety"><div class="container">
+          ${sectionHead(t.safety.kicker, t.safety.title, t.safety.intro)}
+          <div class="safety-grid"><article class="safety-card danger"><h3>${esc(t.safety.dangerTitle)}</h3><ul class="check-list">${t.safety.danger.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></article><article class="safety-card good"><h3>${esc(t.safety.goodTitle)}</h3><ul class="check-list">${t.safety.good.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></article><article class="safety-card"><h3>${esc(t.safety.privacyTitle)}</h3><p>${esc(t.safety.privacyText)}</p></article><article class="safety-card"><h3>${esc(t.safety.sourceTitle)}</h3><p>${esc(t.safety.sourceText)}</p></article></div>
+        </div></section>
+
+        <section class="section"><div class="container">
+          ${sectionHead(t.prompts.kicker, t.prompts.title, t.prompts.intro)}
+          <div class="prompt-grid">${t.prompts.items.map(x=>`<article class="prompt-card"><h3>${esc(x[0])}</h3><p>${esc(x[1])}</p><button class="copy-btn" type="button" data-copy="${esc(x[1])}">${esc(t.prompts.copy)}</button></article>`).join('')}</div>
+        </div></section>
+
+        <section class="section alt" id="practice"><div class="container">
+          <div class="workshop">${sectionHead(t.practice.kicker, t.practice.title, t.practice.intro)}<div class="workshop-steps">${t.practice.steps.map(x=>`<article class="workshop-step"><span>${esc(x[0])}</span><h3>${esc(x[1])}</h3><p>${esc(x[2])}</p></article>`).join('')}</div><div class="example-box">${esc(t.practice.challenge)}</div></div>
+        </div></section>
+
+        <section class="section"><div class="container">
+          ${sectionHead(t.finish.kicker, t.finish.title, t.finish.intro)}
+          <div class="finish-grid"><article class="finish-card"><h3>${esc(t.finish.checklistTitle)}</h3><ul class="check-list">${t.finish.checklist.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></article><article class="finish-card resources"><h3>${esc(t.finish.resourcesTitle)}</h3><p>${esc(t.finish.resourcesText)}</p>${t.finish.resources.map(x=>`<a href="${x[1]}" target="_blank" rel="noopener">${esc(x[0])} ↗</a>`).join('')}</article></div>
+        </div></section>
+
+        <section class="section dark" id="workshop"><div class="container cta-block">
+          <div class="section-kicker">${esc(t.cta.kicker)}</div>
+          <h2>${esc(t.cta.title)}</h2>
+          <p>${esc(t.cta.text)}</p>
+          <a class="btn btn-primary" href="https://wa.me/972548183020?text=${encodeURIComponent(t.misc.whatsappMessage)}" target="_blank" rel="noopener">${esc(t.cta.button)} ↗</a>
+        </div></section>
+
+        <footer class="footer"><div class="container footer-grid"><p>${esc(t.finish.footer)}</p><div class="footer-actions"><a class="icon-btn" href="https://wa.me/?text=${encodeURIComponent(t.misc.share + (currentUrl ? '\n' + currentUrl : ''))}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">↗ ${esc(t.misc.shareLabel)}</a><button class="icon-btn" id="downloadBtn" type="button">↓ ${esc(t.finish.download)}</button><button class="icon-btn" id="printBtn" type="button">${esc(t.finish.print)}</button><a class="icon-btn" href="#top" style="text-decoration:none;display:inline-flex;align-items:center">↑ ${esc(t.finish.top)}</a></div></div></footer>`;
+
+      bindInteractions();
+    }
+
+    function showToast(message) {
+      const el = document.getElementById('toast');
+      el.textContent = message; el.classList.add('show');
+      clearTimeout(showToast.id); showToast.id = setTimeout(()=>el.classList.remove('show'), 1700);
+    }
+
+    async function copyText(text, button) {
+      try { await navigator.clipboard.writeText(text); }
+      catch { const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+      if (button) { const old=button.textContent; button.classList.add('copied'); button.textContent=content[lang].prompts.copied; setTimeout(()=>{button.classList.remove('copied');button.textContent=old},1200); }
+      showToast(content[lang].misc.copied);
+    }
+
+    function bindInteractions() {
+      const t = content[lang];
+      document.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', () => copyText(btn.dataset.copy, btn)));
+      document.getElementById('sampleBtn').addEventListener('click', () => t.prompt.sampleValues.forEach((x,i)=>document.getElementById('builder'+i).value=x));
+      document.getElementById('buildBtn').addEventListener('click', () => {
+        const vals=[0,1,2,3].map(i=>document.getElementById('builder'+i).value.trim());
+        if (!vals[0] || !vals[1]) { showToast(t.misc.builderMissing); return; }
+        document.getElementById('builderOutput').textContent = t.prompt.labels.map((x,i)=>`${x}:\n${vals[i] || '—'}`).join('\n\n');
+      });
+      document.getElementById('copyBuilderBtn').addEventListener('click', e => copyText(document.getElementById('builderOutput').textContent, e.currentTarget));
+      document.getElementById('revealBtn').addEventListener('click', ()=>document.getElementById('quizAnswer').classList.toggle('show'));
+      document.getElementById('timerStart').addEventListener('click', () => {
+        if (timerId) return;
+        timerId=setInterval(()=>{ timerValue--; document.getElementById('timerNumber').textContent=timerValue; if(timerValue<=0){clearInterval(timerId);timerId=null;} },1000);
+      });
+      document.getElementById('timerReset').addEventListener('click', () => { clearInterval(timerId); timerId=null; timerValue=30; document.getElementById('timerNumber').textContent='30'; });
+      document.getElementById('downloadBtn').addEventListener('click', () => {
+        const source='<!doctype html>\n'+document.documentElement.outerHTML;
+        const blob=new Blob([source],{type:'text/html;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a');
+        a.href=url; a.download='teach-ai-bilingual.html'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+      });
+      document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+    }
+
+    document.getElementById('langBtn').addEventListener('click', () => { lang=lang==='he'?'en':'he'; localStorage.setItem('aiTeachersLang',lang); render(); });
+    document.getElementById('menuBtn').addEventListener('click', () => { const p=document.getElementById('mobilePanel'); const open=p.classList.toggle('open'); document.body.classList.toggle('menu-open',open); document.getElementById('menuBtn').setAttribute('aria-expanded',String(open)); });
+    document.getElementById('mobilePanel').addEventListener('click', e => { if(e.target.tagName==='A'){e.currentTarget.classList.remove('open');document.body.classList.remove('menu-open');document.getElementById('menuBtn').setAttribute('aria-expanded','false');} });
+    window.addEventListener('scroll', () => { const max=document.documentElement.scrollHeight-innerHeight; document.getElementById('progressBar').style.width=(max>0?scrollY/max*100:0)+'%'; }, {passive:true});
+    render();
+  })();
+  </script>
+</body>
+</html>
