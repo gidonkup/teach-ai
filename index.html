@@ -12,6 +12,9 @@
   <meta name="twitter:card" content="summary" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2318344f'/%3E%3Ctext x='32' y='45' font-size='34' font-weight='900' fill='%23fff' text-anchor='middle' font-family='Arial,sans-serif'%3ET%3C/text%3E%3C/svg%3E" />
   <title>TEACH:AI — מהרעיון לכלי עובד</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     :root {
       --ink: #18344f;
@@ -33,6 +36,7 @@
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    html[dir="rtl"] * { letter-spacing: normal !important; }
     body {
       margin: 0;
       background:
@@ -40,7 +44,7 @@
         radial-gradient(circle at 94% 18%, rgba(239,119,95,.12), transparent 22rem),
         var(--paper);
       color: var(--ink);
-      font-family: Arial, "Noto Sans Hebrew", sans-serif;
+      font-family: 'Heebo', Arial, sans-serif;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
     }
@@ -157,9 +161,7 @@
     .not-list li::before { content: "לא / NOT"; color: var(--coral); font-size: 10px; font-weight: 900; margin-inline-end: 10px; }
 
     .cards-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
-    .muscle { border-radius: 22px; padding: 24px; background: white; border: 1px solid var(--line); min-height: 210px; }
-    .muscle:nth-child(2n) { background: var(--sky-soft); border-color: transparent; }
-    .muscle:nth-child(3n) { background: var(--gold-soft); border-color: transparent; }
+    .muscle { border-radius: 22px; padding: 24px; background: var(--paper-2); border: 1px solid var(--line); min-height: 210px; }
     .muscle-icon { width: 47px; height: 47px; display: grid; place-items: center; border-radius: 15px; background: var(--ink); color: white; font-weight: 900; margin-bottom: 19px; }
 
     .formula { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 30px; }
